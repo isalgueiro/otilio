@@ -1,0 +1,8 @@
+- key: otilio
+  title: otilio
+  description:
+  fields:
+    - name: type
+      type: keyword
+      required: true
+      description: Document type ("otilio")
