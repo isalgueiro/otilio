@@ -13,15 +13,17 @@ import (
 	"github.com/isalgueiro/otilio/config"
 )
 
+// Otilio data type
 type Otilio struct {
 	done      chan struct{}
 	config    config.Config
 	client    publisher.Client
 	version   gosnmp.SnmpVersion
 	oidToName map[string]string
+	oids      []string
 }
 
-// Creates beater
+// New creates beater
 func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 	config := config.DefaultConfig
 	if err := cfg.Unpack(&config); err != nil {
@@ -41,9 +43,11 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 	}
 
 	m := make(map[string]string)
-	for _, v := range config.Names {
+	var o []string
+	for _, v := range config.OIDs {
 		logp.Debug("otilio", "OID %s translates to %s in event", v["oid"], v["name"])
 		m[v["oid"]] = v["name"]
+		o = append(o, v["oid"])
 	}
 
 	bt := &Otilio{
@@ -51,10 +55,12 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		config:    config,
 		version:   version,
 		oidToName: m,
+		oids:      o,
 	}
 	return bt, nil
 }
 
+// Run runs the beater
 func (bt *Otilio) Run(b *beat.Beat) error {
 	logp.Info("otilio is running! Hit CTRL-C to stop it.")
 
@@ -75,7 +81,7 @@ func (bt *Otilio) Run(b *beat.Beat) error {
 			defer gosnmp.Default.Conn.Close()
 			gosnmp.Default.Community = bt.config.Community
 			gosnmp.Default.Version = bt.version
-			r, err := gosnmp.Default.Get(bt.config.OIDs)
+			r, err := gosnmp.Default.Get(bt.oids)
 			if err != nil {
 				logp.Err("Can't get oids %v: %v", bt.config.OIDs, err.Error())
 			} else {
@@ -84,16 +90,16 @@ func (bt *Otilio) Run(b *beat.Beat) error {
 					"type":       b.Name,
 				}
 				for _, v := range r.Variables {
-					value := ""
+					var value interface{}
+					k := bt.oidToName[v.Name]
+					if k == "" {
+						k = v.Name
+					}
 					switch v.Type {
 					case gosnmp.OctetString:
 						value = string(v.Value.([]byte))
 					default:
-						value = fmt.Sprintf("%v", gosnmp.ToBigInt(v.Value))
-					}
-					k := bt.oidToName[v.Name]
-					if k == "" {
-						k = v.Name
+						value = gosnmp.ToBigInt(v.Value)
 					}
 					logp.Debug("otilio", "%s = %s", k, value)
 					event.Put(k, value)
@@ -105,6 +111,7 @@ func (bt *Otilio) Run(b *beat.Beat) error {
 	}
 }
 
+// Stop stops the beater
 func (bt *Otilio) Stop() {
 	bt.client.Close()
 	close(bt.done)

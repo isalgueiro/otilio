@@ -8,10 +8,9 @@ import "time"
 type Config struct {
 	Period    time.Duration       `config:"period"`
 	Host      string              `config:"host"`
-	OIDs      []string            `config:"oids"`
 	Community string              `config:"community"`
 	Version   string              `config:"version"`
-	Names     []map[string]string `config:"names"`
+	OIDs      []map[string]string `config:"oids"`
 }
 
 var DefaultConfig = Config{

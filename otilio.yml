@@ -16,11 +16,8 @@ otilio:
   community: "public"
 
   # oids to query
-  oids: ["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.3.0"]
-
-  # oids names
   # (the starting dot is intended)
-  names:
+  oids:
     - {oid: ".1.3.6.1.2.1.1.1.0", name: sysDescr}
     - {oid: ".1.3.6.1.2.1.1.3.0", name: sysUpTime}
 #================================ General =====================================
