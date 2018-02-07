@@ -8,9 +8,12 @@ ES_BEATS?=./vendor/github.com/elastic/beats
 GOPACKAGES=$(shell glide novendor)
 PREFIX?=.
 NOTICE_FILE=NOTICE
+TARGETS="linux/amd64" ##  linux/386 windows/amd64 windows/386 darwin/amd64
 
 # Path to the libbeat Makefile
 -include $(ES_BEATS)/libbeat/scripts/Makefile
+
+
 
 # Initial beat setup
 .PHONY: setup
