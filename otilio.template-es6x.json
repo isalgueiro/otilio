@@ -1,6 +1,7 @@
 {
   "mappings": {
     "_default_": {
+      "numeric_detection": true,
       "_meta": {
         "version": "5.6.8"
       },

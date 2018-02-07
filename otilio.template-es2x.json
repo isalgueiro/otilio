@@ -1,6 +1,7 @@
 {
   "mappings": {
     "_default_": {
+      "numeric_detection": true,
       "_all": {
         "norms": {
           "enabled": false
