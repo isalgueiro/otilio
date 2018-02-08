@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "QDMTrejae3xgn+N+Vd5bCZlSxMo=",
+			"path": "github.com/soniah/gosnmp",
+			"revision": "84a3f095f9bfb2ca59aa659e55103cfe89684d4a",
+			"revisionTime": "2017-12-12T11:19:18Z"
+		}
+	],
+	"rootPath": "github.com/isalgueiro/otilio"
+}
