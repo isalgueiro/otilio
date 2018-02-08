@@ -4,7 +4,7 @@
 
 Welcome to Otilio. [Beat](https://www.elastic.co/products/beats) to query SNMP data. This was built following [Beats developer guide](https://www.elastic.co/guide/en/beats/devguide/6.1/new-beat.html) and uses [gosnmp](https://github.com/soniah/gosnmp) library.
 
-Example setup (see `otilo.yml`):
+Example setup (see [otilo.yml](otilio.yml)):
 
 ```
 otilio:
@@ -35,26 +35,8 @@ Ensure that this folder is at the following location:
 
 ### Requirements
 
-* [Golang](https://golang.org/dl/) 1.7
+* [Golang](https://golang.org/dl/) 1.9
 
-### Init Project
-To get running with Otilio and also install the
-dependencies, run the following command:
-
-```
-make setup
-```
-
-It will create a clean git history for each major step. Note that you can always rewrite the history if you wish before pushing your changes.
-
-To push Otilio in the git repository, run the following commands:
-
-```
-git remote set-url origin https://github.com/isalgueiro/otilio
-git push origin master
-```
-
-For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
 ### Build
 
 To build the binary for Otilio run the command below. This will generate a binary
@@ -101,7 +83,7 @@ To generate etc/otilio.template.json and etc/otilio.asciidoc
 ```
 make update
 ```
-Please check index settings, as they may not fit your use case.
+Please **check index settings**, as they may not fit your use case.
 
 ### Cleanup
 
