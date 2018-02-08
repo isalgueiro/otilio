@@ -7,11 +7,11 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
-			"Rev": "2df174808ee097f90d259e432cc04442cf60be21"
+			"Rev": "346938d642f2ec3594ed81d874461961cd0faa76"
 		},
 		{
 			"ImportPath": "github.com/pmezard/go-difflib/difflib",
-			"Rev": "d8ed2627bdf02c080bf22230dbb337003b7aba2d"
+			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
 		},
 		{
 			"ImportPath": "github.com/stretchr/objx",
