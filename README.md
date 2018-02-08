@@ -1,5 +1,7 @@
 # Otilio
 
+[![Build Status](https://travis-ci.org/isalgueiro/otilio.svg?branch=master)](https://travis-ci.org/isalgueiro/otilio)
+
 Welcome to Otilio. [Beat](https://www.elastic.co/products/beats) to query SNMP data. This was built following [Beats developer guide](https://www.elastic.co/guide/en/beats/devguide/6.1/new-beat.html) and uses [gosnmp](https://github.com/soniah/gosnmp) library.
 
 Example setup (see `otilo.yml`):
