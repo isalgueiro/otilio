@@ -8,8 +8,9 @@ otilio:
 
   # SNMP host to query
   host: "127.0.0.1"
+  port: 161
 
-  # SMNP version
+  # SMNP version: 1, 2c or 3
   version: 2c
 
   # SNMP community
