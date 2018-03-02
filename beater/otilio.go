@@ -73,14 +73,25 @@ func (bt *Otilio) Run(b *beat.Beat) error {
 		case <-ticker.C:
 			// TODO: connect outside the loop with a timeout < bt.config.Period
 			gosnmp.Default.Target = bt.config.Host
+			gosnmp.Default.Port = bt.config.Port
+			gosnmp.Default.Community = bt.config.Community
+			gosnmp.Default.Version = bt.version
+			if bt.version == gosnmp.Version3 {
+				gosnmp.Default.SecurityModel = gosnmp.UserSecurityModel
+				gosnmp.Default.SecurityParameters = &gosnmp.UsmSecurityParameters{
+					UserName:                 bt.config.User,
+					AuthenticationPassphrase: bt.config.AuthPassword,
+					PrivacyPassphrase:        bt.config.PrivPassword,
+					AuthenticationProtocol:   gosnmp.SHA,
+					PrivacyProtocol:          gosnmp.DES,
+				}
+			}
 			err := gosnmp.Default.Connect()
 			if err != nil {
 				logp.Critical("Can't connect to %s: %v", bt.config.Host, err.Error())
 				return fmt.Errorf("Can't connect to %s", bt.config.Host)
 			}
 			defer gosnmp.Default.Conn.Close()
-			gosnmp.Default.Community = bt.config.Community
-			gosnmp.Default.Version = bt.version
 			r, err := gosnmp.Default.Get(bt.oids)
 			if err != nil {
 				logp.Err("Can't get oids %v: %v", bt.config.OIDs, err.Error())
