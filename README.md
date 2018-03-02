@@ -14,7 +14,7 @@ otilio:
   # SNMP host to query
   host: "127.0.0.1"
 
-  # SMNP version
+  # SMNP version: 1, 2c or 3
   version: 2c
 
   # SNMP community
@@ -27,6 +27,32 @@ otilio:
     - {oid: ".1.3.6.1.2.1.1.3.0", name: sysUpTime}
 ```
 This will get oids `1.3.6.1.2.1.1.1.0` and `1.3.6.1.2.1.1.3.0` from SNMP server at localhost and store them in `otilio-YYYY.MM.DD` index in Elasticsearch in fields `sysDescr` and `sysUpTime`.
+
+SNMP V3 configuration example
+
+```
+otilio:
+  # Defines how often an event is sent to the output
+  period: 1s
+
+  # SNMP host to query
+  host: "127.0.0.1"
+  port: 10161
+
+  # SMNP version
+  version: 3
+
+  # SNMP user security model parameters
+  # currently only SHA auth and DES encryption supported ¯\_(ツ)_/¯
+  user: "theuser"
+  authpass: "theauthpassword"
+  privpass: "theprivacyencryptionpassword"
+
+  # oids to query
+  # (the starting dot is intended)
+  oids:
+    - {oid: ".1.3.6.1.2.1.25.1", name: hrSystem}
+```
 
 ## Building
 
