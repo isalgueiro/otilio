@@ -8,7 +8,7 @@ import "time"
 // Config stores Otilio configuration loaded from .yaml file
 type Config struct {
 	Period       time.Duration       `config:"period"`
-	Host         string              `config:"host"`
+	Hosts        []string            `config:"hosts"`
 	Port         uint16              `config:"port"`
 	Community    string              `config:"community"`
 	User         string              `config:"user"`
@@ -21,7 +21,6 @@ type Config struct {
 // DefaultConfig default configuration
 var DefaultConfig = Config{
 	Period:    1 * time.Second,
-	Host:      "127.0.0.1",
 	Port:      161,
 	Community: "public",
 	Version:   "2c",

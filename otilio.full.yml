@@ -7,7 +7,7 @@ otilio:
   period: 1s
 
   # SNMP host to query
-  host: "127.0.0.1"
+  hosts: ["127.0.0.1"]
   port: 161
 
   # SMNP version: 1, 2c or 3

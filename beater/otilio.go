@@ -72,51 +72,54 @@ func (bt *Otilio) Run(b *beat.Beat) error {
 			return nil
 		case <-ticker.C:
 			// TODO: connect outside the loop with a timeout < bt.config.Period
-			gosnmp.Default.Target = bt.config.Host
-			gosnmp.Default.Port = bt.config.Port
-			gosnmp.Default.Community = bt.config.Community
-			gosnmp.Default.Version = bt.version
-			if bt.version == gosnmp.Version3 {
-				gosnmp.Default.SecurityModel = gosnmp.UserSecurityModel
-				gosnmp.Default.SecurityParameters = &gosnmp.UsmSecurityParameters{
-					UserName:                 bt.config.User,
-					AuthenticationPassphrase: bt.config.AuthPassword,
-					PrivacyPassphrase:        bt.config.PrivPassword,
-					AuthenticationProtocol:   gosnmp.SHA,
-					PrivacyProtocol:          gosnmp.DES,
-				}
-			}
-			err := gosnmp.Default.Connect()
-			if err != nil {
-				logp.Critical("Can't connect to %s: %v", bt.config.Host, err.Error())
-				return fmt.Errorf("Can't connect to %s", bt.config.Host)
-			}
-			defer gosnmp.Default.Conn.Close()
-			r, err := gosnmp.Default.Get(bt.oids)
-			if err != nil {
-				logp.Err("Can't get oids %v: %v", bt.config.OIDs, err.Error())
-			} else {
-				event := common.MapStr{
-					"@timestamp": common.Time(time.Now()),
-					"type":       b.Name,
-				}
-				for _, v := range r.Variables {
-					var value interface{}
-					k := bt.oidToName[v.Name]
-					if k == "" {
-						k = v.Name
+			for _, host := range bt.config.Hosts {
+				gosnmp.Default.Target = host
+				gosnmp.Default.Port = bt.config.Port
+				gosnmp.Default.Community = bt.config.Community
+				gosnmp.Default.Version = bt.version
+				if bt.version == gosnmp.Version3 {
+					gosnmp.Default.SecurityModel = gosnmp.UserSecurityModel
+					gosnmp.Default.SecurityParameters = &gosnmp.UsmSecurityParameters{
+						UserName:                 bt.config.User,
+						AuthenticationPassphrase: bt.config.AuthPassword,
+						PrivacyPassphrase:        bt.config.PrivPassword,
+						AuthenticationProtocol:   gosnmp.SHA,
+						PrivacyProtocol:          gosnmp.DES,
 					}
-					switch v.Type {
-					case gosnmp.OctetString:
-						value = string(v.Value.([]byte))
-					default:
-						value = gosnmp.ToBigInt(v.Value)
-					}
-					logp.Debug("otilio", "%s = %s", k, value)
-					event.Put(k, value)
 				}
-				bt.client.PublishEvent(event)
-				logp.Info("Event sent")
+				err := gosnmp.Default.Connect()
+				if err != nil {
+					logp.Critical("Can't connect to %s: %v", host, err.Error())
+					return fmt.Errorf("Can't connect to %s", host)
+				}
+				defer gosnmp.Default.Conn.Close()
+				r, err := gosnmp.Default.Get(bt.oids)
+				if err != nil {
+					logp.Err("Can't get oids for %v: %v", host, err.Error())
+				} else {
+					event := common.MapStr{
+						"@timestamp": common.Time(time.Now()),
+						"type":       b.Name,
+						"snmp.host":  host,
+					}
+					for _, v := range r.Variables {
+						var value interface{}
+						k := bt.oidToName[v.Name]
+						if k == "" {
+							k = v.Name
+						}
+						switch v.Type {
+						case gosnmp.OctetString:
+							value = string(v.Value.([]byte))
+						default:
+							value = gosnmp.ToBigInt(v.Value)
+						}
+						logp.Debug("otilio", "%s = %s", k, value)
+						event.Put(k, value)
+					}
+					bt.client.PublishEvent(event)
+					logp.Info("Event sent")
+				}
 			}
 		}
 	}
